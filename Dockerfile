@@ -10,13 +10,16 @@ RUN apk update && \
 FROM busybox:1.37.0-musl
 
 # Define non-root user UID and GID
-ARG TARGETARCH=amd64
-ARG TARGETPLATFORM=linux/amd64
+# Automatic platform args are injected by BuildKit per target platform.
+# Redeclare them WITHOUT a default value: a default shadows the injected value.
+ARG TARGETARCH
+ARG TARGETPLATFORM
 ENV UID=1000
 ENV GID=1000
 
 # Check target architecture and platform
-RUN echo "Target architecture: ${TARGETARCH} Target platform: ${TARGETPLATFORM}"
+RUN echo "Target architecture: ${TARGETARCH} Target platform: ${TARGETPLATFORM}" && \
+    [ -n "$TARGETARCH" ] || { echo "ERROR: TARGETARCH is empty; build with 'docker buildx build --platform ...'" >&2; exit 1; }
 
 # Create user group and user
 RUN addgroup -g $GID user && \
