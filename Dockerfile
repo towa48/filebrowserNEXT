@@ -17,9 +17,6 @@ ARG TARGETARCH
 ENV UID=1000
 ENV GID=1000
 
-# Check target architecture
-RUN echo "Target architecture: ${TARGETARCH}"
-
 # Create user group and user
 RUN addgroup -g $GID user && \
     adduser -D -u $UID -G user user
